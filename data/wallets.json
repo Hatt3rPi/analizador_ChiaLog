@@ -1,0 +1,39 @@
+{
+   "chia": {
+      "balance": "0.000000400141",
+      "balance_pendiente": "0.029700000000",
+      "balance_total": "0.029700400141",
+      "valor_usd": "300.510000000000",
+      "moneda":"XCH"
+   },
+   "chaingreen": {
+      "balance": "500.000000000000",
+      "balance_pendiente": "0.000000000000",
+      "balance_total": "500.000000000000",
+      "valor_usd": "0.010000000000",
+      "moneda":"CGN"
+      
+   },
+   "flax": {
+      "balance": "0.000000000000",
+      "balance_pendiente": "0.121600189166",
+      "balance_total": "0.121600189166",
+      "valor_usd": "10.000000000000",
+      "moneda":"XFX"
+   },
+   "spare-blockchain": {
+      "balance": "4.000000000000",
+      "balance_pendiente": "0.000000000000",
+      "balance_total": "4.000000000000",
+      "valor_usd": "3.000000000000",
+      "moneda":"SPARE"
+   },
+   "signum": {
+      "balance": "3374.300000000000",
+      "balance_pendiente": "22.161000000000",
+      "balance_total": "3396.461000000000",
+      "commitment": "3370.010000000000",
+      "valor_usd": "0.017939460000",
+      "moneda":"SIGNA"
+   }
+}

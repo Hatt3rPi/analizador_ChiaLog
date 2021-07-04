@@ -1,0 +1,182 @@
+{
+    "chia": {
+        "contador": 0,
+        "INFO": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "chia.harvester.harvester": {
+                    "contador": 0
+                },
+                "chia.plotting.plot_tools": {
+                    "contador": 0
+                }
+            },
+            "full_node": {
+                "contador": 0,
+                "chia.full_node.full_node": {
+                    "contador": 0
+                },
+                "chia.full_node.mempool_manager": {
+                    "contador": 0
+                },
+                "chia.full_node.full_node_store": {
+                    "contador": 0
+                }
+            },
+            "wallet": {
+                "contador": 0,
+                "chia.wallet.wallet_blockchain": {
+                    "contador": 0
+                },
+                "chia.wallet.wallet_state_manager": {
+                    "contador": 0
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "chia.harvester.harvester": {
+                    "contador": 0
+                }
+            }
+        }
+    },
+    "chaingreen": {
+        "contador": 0,
+        "INFO": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "chaingreen.harvester.harvester": {
+                    "contador": 0
+                },
+                "chaingreen.plotting.plot_tools": {
+                    "contador": 0
+                }
+            },
+            "full_node": {
+                "contador": 0,
+                "chaingreen.full_node.full_node": {
+                    "contador": 0
+                },
+                "chaingreen.full_node.full_node_store": {
+                    "contador": 0
+                },
+                "chaingreen.full_node.mempool_manager": {
+                    "contador": 0
+                }
+            },
+            "wallet": {
+                "contador": 0,
+                "chaingreen.wallet.wallet_blockchain": {
+                    "contador": 0
+                },
+                "chaingreen.wallet.wallet_state_manager": {
+                    "contador": 0
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "spare.harvester.harvester": {
+                    "contador": 0
+                }
+            }
+        }
+    },
+    "flax": {
+        "contador": 0,
+        "INFO": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "flax.harvester.harvester": {
+                    "contador": 0
+                },
+                "flax.plotting.plot_tools": {
+                    "contador": 0
+                }
+            },
+            "full_node": {
+                "contador": 0,
+                "flax.full_node.full_node": {
+                    "contador": 0
+                },
+                "flax.full_node.mempool_manager": {
+                    "contador": 0
+                },
+                "flax.full_node.full_node_store": {
+                    "contador": 0
+                }
+            },
+            "wallet": {
+                "contador": 0,
+                "flax.wallet.wallet_blockchain": {
+                    "contador": 0
+                },
+                "flax.wallet.wallet_state_manager": {
+                    "contador": 0
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "flax.harvester.harvester": {
+                    "contador": 0
+                }
+            }
+        }
+    },
+    "spare-blockchain": {
+        "contador": 0,
+        "INFO": {
+            "contador": 0,
+            "full_node": {
+                "contador": 0,
+                "spare.full_node.full_node": {
+                    "contador": 0
+                },
+                "spare.full_node.mempool_manager": {
+                    "contador": 0
+                },
+                "spare.full_node.full_node_store": {
+                    "contador": 0
+                }
+            },
+            "harvester": {
+                "contador": 0,
+                "spare.harvester.harvester": {
+                    "contador": 0
+                },
+                "spare.plotting.plot_tools": {
+                    "contador": 0
+                }
+            },
+            "wallet": {
+                "contador": 0,
+                "spare.wallet.wallet_blockchain": {
+                    "contador": 0
+                },
+                "spare.wallet.wallet_state_manager": {
+                    "contador": 0
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "spare.harvester.harvester": {
+                    "contador": 0
+                }
+            }
+        }
+    }
+}

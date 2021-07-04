@@ -1,0 +1,200 @@
+{
+    "chia": {
+        "contador": 3581,
+        "INFO": {
+            "contador": 3581,
+            "harvester": {
+                "contador": 441,
+                "chia.harvester.harvester": {
+                    "contador": 387
+                },
+                "chia.plotting.plot_tools": {
+                    "contador": 54
+                }
+            },
+            "full_node": {
+                "contador": 2868,
+                "chia.full_node.full_node": {
+                    "contador": 1229
+                },
+                "chia.full_node.mempool_manager": {
+                    "contador": 1477
+                },
+                "chia.full_node.full_node_store": {
+                    "contador": 156
+                },
+                "chia.full_node.weight_proof": {
+                    "contador": 6
+                }
+            },
+            "wallet": {
+                "contador": 272,
+                "chia.wallet.wallet_blockchain": {
+                    "contador": 198
+                },
+                "chia.wallet.wallet_state_manager": {
+                    "contador": 74
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 0,
+            "harvester": {
+                "contador": 0,
+                "chia.harvester.harvester": {
+                    "contador": 0
+                }
+            }
+        }
+    },
+    "chaingreen": {
+        "contador": 4629,
+        "INFO": {
+            "contador": 4626,
+            "harvester": {
+                "contador": 421,
+                "chaingreen.harvester.harvester": {
+                    "contador": 367
+                },
+                "chaingreen.plotting.plot_tools": {
+                    "contador": 54
+                }
+            },
+            "full_node": {
+                "contador": 3987,
+                "chaingreen.full_node.full_node": {
+                    "contador": 2391
+                },
+                "chaingreen.full_node.full_node_store": {
+                    "contador": 1512
+                },
+                "chaingreen.full_node.mempool_manager": {
+                    "contador": 82
+                },
+                "chaingreen.full_node.weight_proof": {
+                    "contador": 2
+                }
+            },
+            "wallet": {
+                "contador": 218,
+                "chaingreen.wallet.wallet_blockchain": {
+                    "contador": 218
+                },
+                "chaingreen.wallet.wallet_state_manager": {
+                    "contador": 0
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 3,
+            "harvester": {
+                "contador": 1,
+                "spare.harvester.harvester": {
+                    "contador": 0
+                },
+                "chaingreen.harvester.harvester": {
+                    "contador": 1
+                }
+            },
+            "full_node": {
+                "contador": 2,
+                "chaingreen.full_node.full_node": {
+                    "contador": 2
+                }
+            }
+        }
+    },
+    "flax": {
+        "contador": 2386,
+        "INFO": {
+            "contador": 2374,
+            "harvester": {
+                "contador": 453,
+                "flax.harvester.harvester": {
+                    "contador": 395
+                },
+                "flax.plotting.plot_tools": {
+                    "contador": 58
+                }
+            },
+            "full_node": {
+                "contador": 1689,
+                "flax.full_node.full_node": {
+                    "contador": 1570
+                },
+                "flax.full_node.mempool_manager": {
+                    "contador": 99
+                },
+                "flax.full_node.full_node_store": {
+                    "contador": 16
+                },
+                "flax.full_node.weight_proof": {
+                    "contador": 4
+                }
+            },
+            "wallet": {
+                "contador": 232,
+                "flax.wallet.wallet_blockchain": {
+                    "contador": 164
+                },
+                "flax.wallet.wallet_state_manager": {
+                    "contador": 68
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 12,
+            "harvester": {
+                "contador": 12,
+                "flax.harvester.harvester": {
+                    "contador": 12
+                }
+            }
+        }
+    },
+    "spare-blockchain": {
+        "contador": 10109,
+        "INFO": {
+            "contador": 10104,
+            "full_node": {
+                "contador": 9388,
+                "spare.full_node.full_node": {
+                    "contador": 9270
+                },
+                "spare.full_node.mempool_manager": {
+                    "contador": 97
+                },
+                "spare.full_node.full_node_store": {
+                    "contador": 21
+                }
+            },
+            "harvester": {
+                "contador": 431,
+                "spare.harvester.harvester": {
+                    "contador": 373
+                },
+                "spare.plotting.plot_tools": {
+                    "contador": 58
+                }
+            },
+            "wallet": {
+                "contador": 285,
+                "spare.wallet.wallet_blockchain": {
+                    "contador": 217
+                },
+                "spare.wallet.wallet_state_manager": {
+                    "contador": 68
+                }
+            }
+        },
+        "WARNING": {
+            "contador": 5,
+            "harvester": {
+                "contador": 5,
+                "spare.harvester.harvester": {
+                    "contador": 5
+                }
+            }
+        }
+    }
+}
