@@ -21,6 +21,7 @@ t2=process_time()
 print(f"Importar Librerias: {t2-t1} segundos")
 def actualiza_balance(moneda, monto):
     wallets={}
+    if os.path.isfile("data/wallets.json")==False: open("data/wallets.json","w").close()
     with open("data/wallets.json", 'r') as json_file:
         wallets = json.load(json_file)
     if '{:.12f}'.format(float(int(monto)/1000000000000))!=wallets[moneda]['balance']:
@@ -34,6 +35,7 @@ def actualiza_balance(moneda, monto):
 def historia_harvester():
     log={}
     plt.figure(figsize=(10,6))
+    if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log = json.load(json_file)
 
@@ -63,6 +65,7 @@ def estado_harvester():
     fecha=''
     with open("data/registro_fecha.txt", 'r') as json_file:
         fecha = json.load(json_file)
+    if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log_harvester = json.load(json_file)
         #print(log_harvester)
@@ -146,6 +149,7 @@ def estado_harvester():
     parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/analisis_log.png', 'rb')),message_id=848, chat_id=parametros.chat_id)
 def grafico_log():
     log={}
+    if os.path.isfile("data/registro_log.json")==False: open("data/registro_log.json","w").close()
     with open("data/registro_log.json", 'r') as json_file:
         log = json.load(json_file)
     #print(log['chia']['INFO']['harvester']['chia.harvester.harvester']['contador'])
@@ -237,6 +241,7 @@ def main():
     regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
     archivos=['','.1','.2','.3','.4','.5','.6','.7']
     registro_log={}
+    if os.path.isfile("data/registro_log_formato.json")==False: open("data/registro_log_formato.json","w").close()
     with open("data/registro_log_formato.json", 'r') as json_file:
         registro_log = json.load(json_file)
     for moneda in programa:
@@ -294,6 +299,7 @@ def main():
         #print(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], (registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/384))
 
     log_harvester1={}
+    if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log_harvester1 = json.load(json_file)
     fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S")

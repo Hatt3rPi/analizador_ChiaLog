@@ -4,10 +4,11 @@ import time
 import json
 import matplotlib.pyplot as plt
 import pyautogui
-
+import os
 
 ############## Registra plots creados en directorio ##############
 def bot_plots():
+    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
     with open("data/registro_plots.json", 'r') as json_file:
         plots_analizados = json.load(json_file)
     cont_1=cont_2=cont_3=cont_4=0
@@ -39,6 +40,7 @@ def bot_plots():
         parametros.bot.send_message(parametros.chat_id, f"Tienes {cont_1} plots de baja calidad.\nUsa el comando /recomendacion para conocer más detalles.")
 
 def bot_recomendacion():
+    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
     with open("data/registro_plots.json", 'r') as json_file:
         plots_analizados = json.load(json_file)
     cont_1=0

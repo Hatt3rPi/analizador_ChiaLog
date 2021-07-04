@@ -62,6 +62,7 @@ def wallet_actual():
     wallets={}
     resumen=[]
     profit=0
+    if os.path.isfile("data/wallets.json")==False: open("data/wallets.json","w").close()
     with open("data/wallets.json", 'r') as json_file:
         wallets = json.load(json_file)
     for moneda in wallets:
@@ -75,6 +76,7 @@ def wallet_actual():
 
 def resumen_diario():
     proofs=0
+    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
     with open("data/registro_plots.json", 'r') as json_file:
         plots_analizados = json.load(json_file)
     plots_nuevos=0

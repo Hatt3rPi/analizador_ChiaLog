@@ -29,6 +29,7 @@ def main():
     regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
     archivos=['','.1','.2','.3','.4','.5','.6','.7']
     registro_log={}
+    if os.path.isfile("data/registro_log_formato.json")==False: open("data/registro_log_formato.json","w").close()
     with open("data/registro_log_formato.json", 'r') as json_file:
         registro_log = json.load(json_file)
     for moneda in programa:
@@ -84,6 +85,7 @@ def main():
         #print(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], (registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/384))
 
     log_harvester1={}
+    if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log_harvester1 = json.load(json_file)
     fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -95,7 +97,7 @@ def main():
             log_harvester1.pop(fecha)
     with open("data/registro_log_harvester.json", 'w') as outfile:
         json.dump(log_harvester1, outfile,indent=3)
-    with open('registro_log.json", 'w') as outfile:
+    with open("data/registro_log.json", 'w') as outfile:
         json.dump(registro_log, outfile, indent=4)
     with open("data/registro_fecha.txt", 'w') as outfile:
         json.dump(fecha, outfile)

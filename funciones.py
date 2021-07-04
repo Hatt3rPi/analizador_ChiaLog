@@ -10,6 +10,7 @@ import notificador
 def validar_plots_nuevos():
     plots=[]
     plots_por_analizar={}
+    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
     with open("data/registro_plots.json", 'r') as json_file:
         plots_analizados = json.load(json_file)
     for ruta in parametros.path:
@@ -134,6 +135,7 @@ Tiempo Total: {i['TotalSeconds']}
 
 def resumen_diario():
     proofs=0
+    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
     with open("data/registro_plots.json", 'r') as json_file:
         plots_analizados = json.load(json_file)
     plots_nuevos=0
