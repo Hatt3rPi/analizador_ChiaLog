@@ -237,7 +237,7 @@ def main():
     regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
     archivos=['','.1','.2','.3','.4','.5','.6','.7']
     registro_log={}
-    with open("registro_log_formato.json", 'r') as json_file:
+    with open("data/registro_log_formato.json", 'r') as json_file:
         registro_log = json.load(json_file)
     for moneda in programa:
         contador=1
@@ -305,11 +305,11 @@ def main():
             log_harvester1.pop(fecha)
     
     
-    with open("registro_log_harvester.json", 'w') as outfile:
+    with open("data/registro_log_harvester.json", 'w') as outfile:
         json.dump(log_harvester1, outfile,indent=3)
     with open("data/registro_log.json", 'w') as outfile:
         json.dump(registro_log, outfile, indent=4)
-    with open("registro_fecha.txt", 'w') as outfile:
+    with open("data/registro_fecha.txt", 'w') as outfile:
         json.dump(fecha, outfile)
     t_inicio=process_time()
     
