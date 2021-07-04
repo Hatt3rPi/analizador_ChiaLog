@@ -1,36 +1,36 @@
 {
     "chia": {
-        "contador": 3780,
+        "contador": 3764,
         "INFO": {
-            "contador": 3780,
+            "contador": 3764,
             "harvester": {
-                "contador": 447,
+                "contador": 439,
                 "chia.harvester.harvester": {
-                    "contador": 391
+                    "contador": 383
                 },
                 "chia.plotting.plot_tools": {
                     "contador": 56
                 }
             },
             "full_node": {
-                "contador": 3047,
+                "contador": 3052,
                 "chia.full_node.full_node": {
-                    "contador": 1505
+                    "contador": 1465
                 },
                 "chia.full_node.mempool_manager": {
-                    "contador": 1277
+                    "contador": 1325
                 },
                 "chia.full_node.full_node_store": {
-                    "contador": 265
+                    "contador": 262
                 }
             },
             "wallet": {
-                "contador": 286,
+                "contador": 273,
                 "chia.wallet.wallet_blockchain": {
-                    "contador": 215
+                    "contador": 204
                 },
                 "chia.wallet.wallet_state_manager": {
-                    "contador": 71
+                    "contador": 69
                 }
             }
         },
@@ -45,9 +45,9 @@
         }
     },
     "chaingreen": {
-        "contador": 2405,
+        "contador": 2469,
         "INFO": {
-            "contador": 2404,
+            "contador": 2468,
             "harvester": {
                 "contador": 438,
                 "chaingreen.harvester.harvester": {
@@ -58,12 +58,12 @@
                 }
             },
             "full_node": {
-                "contador": 1745,
+                "contador": 1816,
                 "chaingreen.full_node.full_node": {
-                    "contador": 1272
+                    "contador": 1303
                 },
                 "chaingreen.full_node.full_node_store": {
-                    "contador": 374
+                    "contador": 414
                 },
                 "chaingreen.full_node.mempool_manager": {
                     "contador": 97
@@ -73,9 +73,9 @@
                 }
             },
             "wallet": {
-                "contador": 221,
+                "contador": 214,
                 "chaingreen.wallet.wallet_blockchain": {
-                    "contador": 221
+                    "contador": 214
                 },
                 "chaingreen.wallet.wallet_state_manager": {
                     "contador": 0
@@ -96,34 +96,34 @@
         }
     },
     "flax": {
-        "contador": 2414,
+        "contador": 2422,
         "INFO": {
-            "contador": 2411,
+            "contador": 2419,
             "harvester": {
-                "contador": 447,
+                "contador": 444,
                 "flax.harvester.harvester": {
-                    "contador": 389
+                    "contador": 388
                 },
                 "flax.plotting.plot_tools": {
-                    "contador": 58
+                    "contador": 56
                 }
             },
             "full_node": {
-                "contador": 1697,
+                "contador": 1705,
                 "flax.full_node.full_node": {
-                    "contador": 1602
+                    "contador": 1609
                 },
                 "flax.full_node.mempool_manager": {
-                    "contador": 84
+                    "contador": 85
                 },
                 "flax.full_node.full_node_store": {
                     "contador": 11
                 }
             },
             "wallet": {
-                "contador": 267,
+                "contador": 270,
                 "flax.wallet.wallet_blockchain": {
-                    "contador": 194
+                    "contador": 197
                 },
                 "flax.wallet.wallet_state_manager": {
                     "contador": 73
@@ -141,37 +141,37 @@
         }
     },
     "spare-blockchain": {
-        "contador": 10171,
+        "contador": 10186,
         "INFO": {
-            "contador": 10169,
+            "contador": 10184,
             "full_node": {
-                "contador": 9443,
+                "contador": 9467,
                 "spare.full_node.full_node": {
-                    "contador": 9272
+                    "contador": 9299
                 },
                 "spare.full_node.mempool_manager": {
-                    "contador": 88
+                    "contador": 86
                 },
                 "spare.full_node.full_node_store": {
-                    "contador": 83
+                    "contador": 82
                 }
             },
             "harvester": {
-                "contador": 441,
+                "contador": 443,
                 "spare.harvester.harvester": {
                     "contador": 385
                 },
                 "spare.plotting.plot_tools": {
-                    "contador": 56
+                    "contador": 58
                 }
             },
             "wallet": {
-                "contador": 285,
+                "contador": 274,
                 "spare.wallet.wallet_blockchain": {
-                    "contador": 212
+                    "contador": 203
                 },
                 "spare.wallet.wallet_state_manager": {
-                    "contador": 73
+                    "contador": 71
                 }
             }
         },
