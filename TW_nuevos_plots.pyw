@@ -9,9 +9,12 @@ import json
 
 plots=[]
 plots_por_analizar={}
-if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
-with open("data/registro_plots.json", 'r') as json_file:
-    plots_analizados = json.load(json_file)
+plots_analizados={}
+if os.path.isfile("data/registro_plots.json")==False: 
+    open("data/registro_plots.json","w").close()
+else:
+    with open("data/registro_plots.json", 'r') as json_file:
+        plots_analizados = json.load(json_file)
 for ruta in parametros.path:
     for archivo in os.listdir(ruta):
         if archivo.endswith(".plot"):
@@ -34,10 +37,11 @@ if len(plots)==0:
     print(f"{datetime.now()}: 0 Nuevo(s) plot(s) encontrado(s)")
 if len(plots)>0:
     print(f"{datetime.now()}: {len(plots)} Nuevo(s) plot(s) encontrado(s): {plots}")
-    cmd = f"\"C:\\Program Files (x86)\\ChiaPlotStatus\\ChiaPlotStatus\\ChiaPlotStatusCli.exe\" -o C:\\Users\\{os.getlogin()}\\Documents\\Notificador\\chia_plot_status.json -f json"
+    if os.path.isfile("data/chia_plot_status.json")==False: open("data/chia_plot_status.json","w").close()
+    cmd = f"\"C:\\Program Files (x86)\\ChiaPlotStatus\\ChiaPlotStatus\\ChiaPlotStatusCli.exe\" -o {parametros.ruta_actual}\data\chia_plot_status.json -f json"
     #print(cmd)
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=0)
-    time.sleep(60)
+    time.sleep(30) 
     f = open("data/chia_plot_status.json",)
     plot_status = json.load(f)
     for plot in plots:

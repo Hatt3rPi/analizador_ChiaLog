@@ -61,10 +61,12 @@ def analiza_discos():
 def wallet_actual():
     wallets={}
     resumen=[]
-    profit=0
-    if os.path.isfile("data/wallets.json")==False: open("data/wallets.json","w").close()
-    with open("data/wallets.json", 'r') as json_file:
-        wallets = json.load(json_file)
+    profit=0.0
+    if os.path.isfile("data/wallets.json")==False: 
+        open("data/wallets.json","w").close()
+    else:
+        with open("data/wallets.json", 'r') as json_file:
+            wallets = json.load(json_file)
     for moneda in wallets:
         profit+=float(wallets[moneda]['balance_total'])*float(wallets[moneda]['valor_usd'])
         resumen.append([moneda.capitalize().replace('-blockchain',''),"{:.4g}".format(float(wallets[moneda]['balance_total']))+" "+wallets[moneda]['moneda'],"USD "+ str(round(float(wallets[moneda]['balance_total'])*float(wallets[moneda]['valor_usd']),1))])
@@ -76,9 +78,13 @@ def wallet_actual():
 
 def resumen_diario():
     proofs=0
-    if os.path.isfile("data/registro_plots.json")==False: open("data/registro_plots.json","w").close()
-    with open("data/registro_plots.json", 'r') as json_file:
-        plots_analizados = json.load(json_file)
+    plots_analizados={}
+
+    if os.path.isfile("data/registro_plots.json")==False: 
+        open("data/registro_plots.json","w").close()
+    else:
+        with open("data/registro_plots.json", 'r') as json_file:
+            plots_analizados = json.load(json_file)
     plots_nuevos=0
     for key, valor in plots_analizados.items():
         proofs=proofs+plots_analizados[key]['pruebas_aprobadas']
@@ -86,7 +92,10 @@ def resumen_diario():
         #print(plots_analizados[key]['fecha_creacion'], (datetime.now()- datetime.fromtimestamp(time.mktime(datetime.strptime(plots_analizados[key]['fecha_creacion'],"%d/%m/%Y %H:%M:%S").timetuple()))).total_seconds()<=24*60*60)
         if (datetime.now()- datetime.fromtimestamp(time.mktime(datetime.strptime(plots_analizados[key]['fecha_creacion'],"%d/%m/%Y %H:%M:%S").timetuple()))).total_seconds()<=24*60*60:
             plots_nuevos=plots_nuevos+1
-    calidad=proofs/(len(plots_analizados)*parametros.check_plot_nro_proof)
+    if (len(plots_analizados)*parametros.check_plot_nro_proof)==0:
+        calidad=0
+    else:
+        calidad=proofs/(len(plots_analizados)*parametros.check_plot_nro_proof)
     if calidad<=0.7:
         mensaje_check=f"🔴{round(calidad,3)}🔴"
     elif calidad>0.7 and calidad<=1:

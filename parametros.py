@@ -7,11 +7,12 @@ import os
 ## Ingresar paratmetros ##
 # --- Telegram ---
 token_bot="1842675017:AAEOrbcCcdjUjA2RHJIkdExDOcYWip9mx24"
-chat_id="-599355307"
+chat_id="1567062024"
 #chat_id="-599355307" 1567062024
 
 # --- ubicación carpetas farmeo ---
-path = ["C:\CHIA","E:\Plots"]
+path = ["E:\Plots"]
+#path = ["C:\CHIA","E:\Plots"]
 
 
 aviso_telegram=True
@@ -22,7 +23,7 @@ aviso_plots_nuevos=True
 aviso_diario=True
 aviso_diario_hora=[23,00]
 """
-check_plot_nro_proof=50
+check_plot_nro_proof=50 #restaurar 50
 
 #---- Funcionamiento ----
 

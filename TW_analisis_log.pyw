@@ -299,9 +299,11 @@ def main():
         #print(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], (registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/384))
 
     log_harvester1={}
-    if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
-    with open("data/registro_log_harvester.json", 'r') as json_file:
-        log_harvester1 = json.load(json_file)
+    if os.path.isfile("data/registro_log_harvester.json")==False: 
+        open("data/registro_log_harvester.json","w").close()
+    else:
+        with open("data/registro_log_harvester.json", 'r') as json_file:
+            log_harvester1 = json.load(json_file)
     fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     log_harvester1.setdefault(fecha,log_harvester)
     #print(log_harvester1)
