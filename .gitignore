@@ -2,4 +2,4 @@
 img/
 
 #Archivos de data
-data/
+data/*.json
