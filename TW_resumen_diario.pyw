@@ -38,10 +38,9 @@ def analiza_discos():
     #print (drives)
     #pd.DataFrame(drives,columns=['hora','chia','chaingreen','flax','spare-blockchain'])
     TTamaño_carpeta =0
-    blockchain={'Chia':{'C:\\CHIA\\', 'E:\\Plots\\'}, 'Signum':{'E:\\Plots Signum\\'}, 'Temporales':{'E:\\Plotter', 'F:\\Plots','D:\\Plots', 'C:\\Plots'}}
-    for moneda in blockchain:
+    for moneda in parametros.blockchain:
         Tamaño_carpeta = 0
-        for disco in blockchain[moneda]:
+        for disco in parametros.blockchain[moneda]:
             for entry in os.scandir(disco):
                 if entry.is_file():
                     Tamaño_carpeta += entry.stat().st_size

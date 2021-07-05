@@ -241,8 +241,8 @@ def main():
     regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
     archivos=['','.1','.2','.3','.4','.5','.6','.7']
     registro_log={}
-    if os.path.isfile("data/registro_log_formato.json")==False: open("data/registro_log_formato.json","w").close()
-    with open("data/registro_log_formato.json", 'r') as json_file:
+    if os.path.isfile("formato/registro_log_formato.json")==False: open("formato/registro_log_formato.json","w").close()
+    with open("formato/registro_log_formato.json", 'r') as json_file:
         registro_log = json.load(json_file)
     for moneda in programa:
         contador=1
