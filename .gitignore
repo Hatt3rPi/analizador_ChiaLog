@@ -3,3 +3,6 @@ img/
 
 #Archivos de data
 data/*.json
+
+#parametros básicos
+parametros.py
