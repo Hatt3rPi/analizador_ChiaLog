@@ -8,6 +8,7 @@
 - [Chia Plot Status](https://github.com/grayfallstown/Chia-Plot-Status)
 - Log de Chia o su fork debe estar a nivel `INFO`
 - Crear un bot en Telegram
+- Programador de Tareas de Windows
 
 
 # 1. Instalación vía Powershell

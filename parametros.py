@@ -7,7 +7,7 @@ import os
 ## Ingresar paratmetros ##
 # --- Telegram ---
 token_bot="1842675017:AAEOrbcCcdjUjA2RHJIkdExDOcYWip9mx24"
-chat_id="1567062024"
+chat_id="-599355307"
 #chat_id="-599355307" 1567062024
 
 # --- ubicación carpetas farmeo ---

@@ -6,3 +6,4 @@ data/*.json
 
 #parametros básicos
 parametros.py
+test[0-9].py
