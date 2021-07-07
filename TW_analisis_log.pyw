@@ -54,11 +54,27 @@ def historia_harvester():
 
 
     plt.legend(title='Moneda:')
-    plt.title(f'Salud del Harvester: Porcentaje de cumplimiento de Signage Point (última actualizacion: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
+    plt.title(f'Salud del Harvester: Porcentaje de cumplimiento de Signage Point \n({datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
     #plt.plot()
     plt.savefig('img/registro_log_harvester_24h.png')
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=847, chat_id=parametros.chat_id)
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/registro_log_harvester_24h.png', 'rb')),message_id=847, chat_id=parametros.chat_id)
+    mensajes={}
+    if os.path.isfile("data/telegram_mensajes.json"):
+        with open("data/telegram_mensajes.json", 'r') as json_file:
+            mensajes = json.load(json_file)
+            if "registro_log_harvester_24h" in mensajes:
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=mensajes["registro_log_harvester_24h"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/registro_log_harvester_24h.png', 'rb')),message_id=mensajes["registro_log_harvester_24h"], chat_id=parametros.chat_id)
+            else:
+                id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_log_harvester_24h.png', 'rb'))
+                
+                mensajes.setdefault("registro_log_harvester_24h",id1.message_id)
+                with open("data/telegram_mensajes.json", 'w') as outfile:
+                    json.dump(mensajes, outfile,indent=3)
+    else:
+        id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_log_harvester_24h.png', 'rb'))
+        mensajes.setdefault("registro_log_harvester_24h",id1.message_id)
+        with open("data/telegram_mensajes.json", 'w') as outfile:
+            json.dump(mensajes, outfile,indent=3)
     #plt.show()
 def estado_harvester():
     log_harvester={}
@@ -134,7 +150,7 @@ def estado_harvester():
         specs=[[{'type' : 'indicator'}, {'type' : 'indicator'}],[{'type' : 'indicator'}, {'type' : 'indicator'}]],
         )
         
-    fig.update_layout(title_text="Cantidad Signage point por hora")
+    fig.update_layout(title_text=f'Cantidad Signage point por hora ({datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
     #,         scene=dict(        annotations=[        dict(text=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))])
     fig.append_trace(trace1, row=1, col=1)
     fig.append_trace(trace2, row=1, col=2)
@@ -143,10 +159,30 @@ def estado_harvester():
     #fig.show()
 
     fig.write_image("img/estado_harvester.png")
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=846, chat_id=parametros.chat_id)
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/estado_harvester.png', 'rb')),message_id=846, chat_id=parametros.chat_id)
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=848, chat_id=parametros.chat_id)
-    parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/analisis_log.png', 'rb')),message_id=848, chat_id=parametros.chat_id)
+    mensajes={}
+    
+    if os.path.isfile("data/telegram_mensajes.json"):
+        with open("data/telegram_mensajes.json", 'r') as json_file:
+            mensajes = json.load(json_file)
+            if "estado_harvester" in mensajes and "analisis_log" in mensajes:
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=mensajes["estado_harvester"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/estado_harvester.png', 'rb')),message_id=mensajes["estado_harvester"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=mensajes["analisis_log"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/analisis_log.png', 'rb')),message_id=mensajes["analisis_log"], chat_id=parametros.chat_id)
+            else:
+                id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/estado_harvester.png', 'rb'))
+                id2=parametros.bot.send_photo(parametros.chat_id, photo=open('img/analisis_log.png', 'rb'))
+                mensajes.setdefault("estado_harvester",id1.message_id)
+                mensajes.setdefault("analisis_log",id2.message_id)
+                with open("data/telegram_mensajes.json", 'w') as outfile:
+                    json.dump(mensajes, outfile,indent=3)
+    else:
+        id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/estado_harvester.png', 'rb'))
+        id2=parametros.bot.send_photo(parametros.chat_id, photo=open('img/analisis_log.png', 'rb'))
+        mensajes.setdefault("estado_harvester",id1.message_id)
+        mensajes.setdefault("analisis_log",id2.message_id)
+        with open("data/telegram_mensajes.json", 'w') as outfile:
+            json.dump(mensajes, outfile,indent=3)
 def grafico_log():
     log={}
     if os.path.isfile("data/registro_log.json")==False: open("data/registro_log.json","w").close()
@@ -223,7 +259,7 @@ def grafico_log():
     plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
 
     # Show the graph
-    plt.title(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), loc='center')
+    plt.title(f'Comportamiento archivos log ({datetime.now().strftime("%Y-%m-%d %H:%M:%S")})', loc='center')
     #plt.show()
    
     plt.savefig('img/analisis_log.png')
