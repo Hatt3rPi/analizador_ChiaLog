@@ -5,6 +5,6 @@ img/
 data/*.json
 
 #parametros básicos
-/parametros.py
-/test[0-9].py
-/__pycache__
+parametros.py
+test[0-9].py
+__pycache__/*
