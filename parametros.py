@@ -31,8 +31,8 @@ check_plot_nro_proof=50
 
 #---- Funcionamiento ----
 
-
-version_chia="app-1.1.7"
+#"app-1.1.7"
+version_chia="app-1.1.795"
 ruta_daemon=f"C:\\Users\\{os.getlogin()}\\AppData\Local\chia-blockchain\\{version_chia}\\resources\\app.asar.unpacked\\daemon"  
 ruta_actual=str(pathlib.Path().absolute()).replace('\\','\\\\')+'\\\\'  
 bot = telebot.TeleBot(token_bot)
