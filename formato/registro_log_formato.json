@@ -178,5 +178,11 @@
                 }
             }
         }
+    },
+    "signum": {
+        "contador": 0
+    },
+    "bitcoinhd": {
+        "contador": 0
     }
 }

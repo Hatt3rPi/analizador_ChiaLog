@@ -38,16 +38,24 @@ def historia_harvester():
     if os.path.isfile("data/registro_log_harvester.json")==False: open("data/registro_log_harvester.json","w").close()
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log = json.load(json_file)
-
+    #print(log)
     data=[]
     for key, fila in log.items():
-        data.append([key[11:16], float(fila['chia']['porcentaje'].strip('%'))/100,float(fila['chaingreen']['porcentaje'].strip('%'))/100,float(fila['flax']['porcentaje'].strip('%'))/100,float(fila['spare-blockchain']['porcentaje'].strip('%'))/100])
+        if 'signum' in fila:
+            hrvst_sgna=float(fila['signum']['porcentaje'].strip('%'))/100
+            hrvst_bth=float(fila['bitcoinhd']['porcentaje'].strip('%'))/100
+        else:
+            hrvst_sgna=0
+            hrvst_bth=0
+        data.append([key[11:16], float(fila['chia']['porcentaje'].strip('%'))/100,float(fila['chaingreen']['porcentaje'].strip('%'))/100,float(fila['flax']['porcentaje'].strip('%'))/100,float(fila['spare-blockchain']['porcentaje'].strip('%'))/100,hrvst_sgna,hrvst_bth])
 
-    df = pd.DataFrame(data,columns=['hora','chia','chaingreen','flax','spare-blockchain'])
+    df = pd.DataFrame(data,columns=['hora','chia','chaingreen','flax','spare-blockchain','signum','bitcoinhd'])
     plt.plot('hora', 'chia', data=df,   color='green', label='chia')
     plt.plot('hora', 'chaingreen', data=df,   color='orange', label='chaingreen')
     plt.plot('hora', 'flax', data=df,   color='grey', label='flax')
     plt.plot('hora', 'spare-blockchain', data=df,   color='blue', label='spare')
+    plt.plot('hora', 'signum', data=df,   color='red', label='signum')
+    plt.plot('hora', 'bitcoinhd', data=df,   color='brown', label='bitcoinhd')
     plt.ylim(0,1.3)
     #plt.grid(axis='x', color='0.95')
     plt.xticks(np.arange(0, len(df['hora']), 30))
@@ -76,6 +84,7 @@ def historia_harvester():
         with open("data/telegram_mensajes.json", 'w') as outfile:
             json.dump(mensajes, outfile,indent=3)
     #plt.show()
+
 def estado_harvester():
     log_harvester={}
     fecha=''
@@ -85,77 +94,109 @@ def estado_harvester():
     with open("data/registro_log_harvester.json", 'r') as json_file:
         log_harvester = json.load(json_file)
         #print(log_harvester)
-        valor=[log_harvester[fecha]['chia']['cantidad'], log_harvester[fecha]['chaingreen']['cantidad'], log_harvester[fecha]['flax']['cantidad'], log_harvester[fecha]['spare-blockchain']['cantidad']]
-
+        valor=[log_harvester[fecha]['chia']['cantidad'], log_harvester[fecha]['chaingreen']['cantidad'], log_harvester[fecha]['flax']['cantidad'], log_harvester[fecha]['spare-blockchain']['cantidad'], log_harvester[fecha]['signum']['cantidad'], log_harvester[fecha]['bitcoinhd']['cantidad']]
+    #print(valor)
     color=[]
     n=0
-    for i in valor:
-        if i<=307:
-            color.insert(n,'red')
-        elif i>=364:
-            color.insert(n,'green')
-        else:
-            color.insert(n,'yellow')
+    for  i in valor:
+        if n in [0,1,2,3]:
+            if i<=45:
+                color.insert(n,'red')
+            elif i>=57:
+                color.insert(n,'green')
+            else:
+                color.insert(n,'yellow')
+        elif n==4:
+            if i<=20:
+                color.insert(n,'red')
+            else:
+                color.insert(n,'green')
+        elif n==5:
+            if i<=30:
+                color.insert(n,'red')
+            else:
+                color.insert(n,'green')              
         n=n+1
 
     trace1 = go.Indicator(mode="gauge+number",
             value=log_harvester[fecha]['chia']['cantidad'],
-            delta = {'reference': 384}, 
-            gauge = {'axis': {'range': [None, 400]},
+            delta = {'reference': 64}, 
+            gauge = {'axis': {'range': [None, 70]},
                     'steps' :[
-                                {'range': [0, 307], 'color': "lightgray"},
-                                {'range': [307, 364], 'color': "gray"}
+                                {'range': [0, 45], 'color': "lightgray"},
+                                {'range': [45, 57], 'color': "gray"}
                             ], 
                     'bar': {'color': color[0]},
-                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 384}}, 
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 64}}, 
             domain={'row' : 1, 'column' : 1}, title={'text': "Chia"})
     trace2 = go.Indicator(mode="gauge+number",    
             value=log_harvester[fecha]['chaingreen']['cantidad'],
-            delta = {'reference': 384}, 
-            gauge = {'axis': {'range': [None, 400]}, 
+            delta = {'reference': 64}, 
+            gauge = {'axis': {'range': [None, 70]}, 
                     'steps' :[
-                                {'range': [0, 307], 'color': "lightgray"},
-                                {'range': [307, 364], 'color': "gray"}
+                                {'range': [0, 45], 'color': "lightgray"},
+                                {'range': [45, 57], 'color': "gray"}
                             ], 
                     'bar': {'color': color[1]},
-                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 384}},    
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 64}},    
             domain={'row' : 1, 'column' : 2}, title={'text': "Chaingreen"})
     trace3 = go.Indicator(mode="gauge+number",    
             value=log_harvester[fecha]['flax']['cantidad'],
-            delta = {'reference': 384}, 
-            gauge = {'axis':{'range': [None, 400]},
+            delta = {'reference': 64}, 
+            gauge = {'axis':{'range': [None, 70]},
                     'steps' :[
-                                {'range': [0, 307], 'color': "lightgray"},
-                                {'range': [307, 364], 'color': "gray"}
+                                {'range': [0, 45], 'color': "lightgray"},
+                                {'range': [45, 57], 'color': "gray"}
                             ],  
                     'bar': {'color': color[2]},
-                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 384}},    
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 64}},    
             domain={'row' : 2, 'column' : 1}, title={'text': "Flax"})
     trace4 = go.Indicator(mode="gauge+number",    
             value=log_harvester[fecha]['spare-blockchain']['cantidad'],
-            delta = {'reference': 384},  
-            gauge = {'axis':{'range': [None, 400]}, 
+            delta = {'reference': 64},  
+            gauge = {'axis':{'range': [None, 70]}, 
                     'steps' :[
-                                {'range': [0, 307], 'color': "lightgray"},
-                                {'range': [307, 364], 'color': "gray"}
+                                {'range': [0, 45], 'color': "lightgray"},
+                                {'range': [45, 57], 'color': "gray"}
                             ], 
                     'bar': {'color': color[3]},
-                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 384}},    
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 64}},    
             domain={'row' : 2, 'column' : 2}, title={'text': "Spare"})
-
+    trace5 = go.Indicator(mode="gauge+number",    
+            value=log_harvester[fecha]['signum']['cantidad'],
+            delta = {'reference': 30},  
+            gauge = {'axis':{'range': [None, 35]}, 
+                    'steps' :[
+                                {'range': [0, 20], 'color': "lightgray"}
+                            ], 
+                    'bar': {'color': color[4]},
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 30}},    
+            domain={'row' : 1, 'column' : 3}, title={'text': "Signum"})
+    trace6 = go.Indicator(mode="gauge+number",    
+            value=log_harvester[fecha]['bitcoinhd']['cantidad'],
+            delta = {'reference': 40},  
+            gauge = {'axis':{'range': [None, 45]}, 
+                    'steps' :[
+                                {'range': [0, 30], 'color': "lightgray"}
+                            ], 
+                    'bar': {'color': color[5]},
+                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 40}},    
+            domain={'row' : 2, 'column' :3}, title={'text': "BitcoinHD"})
 
     fig = make_subplots(
         rows=2,
-        cols=2,
-        specs=[[{'type' : 'indicator'}, {'type' : 'indicator'}],[{'type' : 'indicator'}, {'type' : 'indicator'}]],
+        cols=3,
+        specs=[[{'type' : 'indicator'}, {'type' : 'indicator'}, {'type' : 'indicator'}],[{'type' : 'indicator'}, {'type' : 'indicator'}, {'type' : 'indicator'}]],
         )
         
-    fig.update_layout(title_text=f'Cantidad Signage point por hora ({datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
+    fig.update_layout(title_text=f'Cantidad Signage point de últimos 10min ({datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
     #,         scene=dict(        annotations=[        dict(text=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))])
     fig.append_trace(trace1, row=1, col=1)
     fig.append_trace(trace2, row=1, col=2)
     fig.append_trace(trace3, row=2, col=1)
     fig.append_trace(trace4, row=2, col=2)
+    fig.append_trace(trace5, row=1, col=3)
+    fig.append_trace(trace6, row=2, col=3)
     #fig.show()
 
     fig.write_image("img/estado_harvester.png")
@@ -183,6 +224,7 @@ def estado_harvester():
         mensajes.setdefault("analisis_log",id2.message_id)
         with open("data/telegram_mensajes.json", 'w') as outfile:
             json.dump(mensajes, outfile,indent=3)
+
 def grafico_log():
     log={}
     if os.path.isfile("data/registro_log.json")==False: open("data/registro_log.json","w").close()
@@ -224,8 +266,8 @@ def grafico_log():
     
     # Draw ylabels
     ax.set_rlabel_position(0)
-    plt.yticks([100,200,300], ["100","200","300"], color="grey", size=7)
-    plt.ylim(0,400)
+    plt.yticks([20,40,60], ["20","40","60"], color="grey", size=7)
+    plt.ylim(0,80)
     
 
     # ------- PART 2: Add plots
@@ -271,69 +313,127 @@ def main():
     programa={'chia':'latin-1',
     'chaingreen':'latin-1',
     'flax':'latin-1',
-    'spare-blockchain':'latin-1'}
+    'spare-blockchain':'latin-1',
+    'signum':'latin-1',
+    'bitcoinhd':'latin-1'}
     #log_file_path = fr"C:\Users\{os.getlogin()}\.chia\mainnet\log\debug.log"
     match_list = []
-    regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
+    
     archivos=['','.1','.2','.3','.4','.5','.6','.7']
     registro_log={}
     if os.path.isfile("formato/registro_log_formato.json")==False: open("formato/registro_log_formato.json","w").close()
     with open("formato/registro_log_formato.json", 'r') as json_file:
         registro_log = json.load(json_file)
     for moneda in programa:
-        contador=1
-        t_inicio1=process_time()
-        info_faltante=True
-        fin_bucle=False
-        for archivo in archivos:
+        if moneda in ('chia','chaingreen','flax','spare-blockchain'):
+            regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)'
+            contador=1
+            t_inicio1=process_time()
+            info_faltante=True
+            fin_bucle=False
+            for archivo in archivos:
+                if info_faltante==False: break
+                n=0
+                with FileReadBackwards(fr"C:\Users\{os.getlogin()}\.{moneda}\mainnet\log\debug.log{archivo}",encoding=programa[moneda]) as frb:
+                    tmoneda=process_time()
+                    for line in frb:
+                        if fin_bucle: break
+                        for match in re.finditer(regex, line, re.S):
+                            if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=10)):
+                                for match2 in re.finditer('^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)[\s]*Confirmed balance amount is ([0-9]*)', line, re.S):
+                                    print(moneda, match2.groups()[4])
+                                    actualiza_balance(moneda, match2.groups()[4])
+                                #print (match.groups())
+                                nuevo=False
+                                nuevo1=False
+                                nuevo2=False
+                                nuevo3=False
+                                if not moneda in registro_log:
+                                    registro_log.setdefault(moneda,{'contador':1})
+                                    nuevo=True
+                                if not match.groups()[3] in registro_log[moneda]:
+                                    registro_log[moneda].setdefault(match.groups()[3],{'contador':1})
+                                    nuevo1=True
+                                if not match.groups()[1] in registro_log[moneda][match.groups()[3]]:
+                                    registro_log[moneda][match.groups()[3]].setdefault(match.groups()[1],{'contador':1})
+                                    nuevo2=True
+                                if not match.groups()[2] in registro_log[moneda][match.groups()[3]][match.groups()[1]]:
+                                    registro_log[moneda][match.groups()[3]][match.groups()[1]].setdefault(match.groups()[2],{'contador':1})
+                                    nuevo3=True  
+                                if nuevo3==False:
+                                    registro_log[moneda][match.groups()[3]][match.groups()[1]][match.groups()[2]]['contador']=1+registro_log[moneda][match.groups()[3]][match.groups()[1]][match.groups()[2]]['contador']
+                                if nuevo2==False:
+                                    registro_log[moneda][match.groups()[3]][match.groups()[1]]['contador']=1+registro_log[moneda][match.groups()[3]][match.groups()[1]]['contador']
+                                if nuevo1==False:
+                                    registro_log[moneda][match.groups()[3]]['contador']=1+registro_log[moneda][match.groups()[3]]['contador']
+                                if nuevo==False:
+                                    registro_log[moneda]['contador']=1+registro_log[moneda]['contador']
+                            else:
+                                info_faltante=False
+                                fin_bucle=True
+                                break 
+                    t_fin1=process_time()
+                    print("\t",moneda,f"archivo: debug.log{archivo}",f"-> tiempo ejecución: {t_fin1-tmoneda} segundos")
+            t_fin1=process_time()
+            print(moneda, f"-> tiempo ejecución: {t_fin1-t_inicio1} segundos")
+
+            log_harvester.setdefault(moneda,{'cantidad':registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], 'porcentaje':"{:.2%}".format(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/64)})
+            #print(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], (registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/64))
+        elif moneda=='signum':
+            regex='^([0-9:, -]{23})\s([a-zA-Z0-9-\W]*):\sbtdex.ui.MiningPanel\s([a-zA-Z0-9-\W]*)round finished: roundtime=([0-9]*)ms, speed=([0-9.]*)MiB/s'
+            contador=1
+            t_inicio1=process_time()
+            info_faltante=True
+            fin_bucle=False
             if info_faltante==False: break
             n=0
-            with FileReadBackwards(fr"C:\Users\{os.getlogin()}\.{moneda}\mainnet\log\debug.log{archivo}",encoding=programa[moneda]) as frb:
+            #fr"{parametros.ruta_log_signum}\\btdex.log"
+            with FileReadBackwards(parametros.ruta_log_signum , encoding=programa[moneda]) as frb:
                 tmoneda=process_time()
+                
                 for line in frb:
                     if fin_bucle: break
                     for match in re.finditer(regex, line, re.S):
-                        if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=60)):
-                            for match2 in re.finditer('^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): ([A-Z]*)[\s]*Confirmed balance amount is ([0-9]*)', line, re.S):
-                                print(moneda, match2.groups()[4])
-                                actualiza_balance(moneda, match2.groups()[4])
-                            #print (match.groups())
-                            nuevo=False
-                            nuevo1=False
-                            nuevo2=False
-                            nuevo3=False
-                            if not moneda in registro_log:
-                                registro_log.setdefault(moneda,{'contador':1})
-                                nuevo=True
-                            if not match.groups()[3] in registro_log[moneda]:
-                                registro_log[moneda].setdefault(match.groups()[3],{'contador':1})
-                                nuevo1=True
-                            if not match.groups()[1] in registro_log[moneda][match.groups()[3]]:
-                                registro_log[moneda][match.groups()[3]].setdefault(match.groups()[1],{'contador':1})
-                                nuevo2=True
-                            if not match.groups()[2] in registro_log[moneda][match.groups()[3]][match.groups()[1]]:
-                                registro_log[moneda][match.groups()[3]][match.groups()[1]].setdefault(match.groups()[2],{'contador':1})
-                                nuevo3=True  
-                            if nuevo3==False:
-                                registro_log[moneda][match.groups()[3]][match.groups()[1]][match.groups()[2]]['contador']=1+registro_log[moneda][match.groups()[3]][match.groups()[1]][match.groups()[2]]['contador']
-                            if nuevo2==False:
-                                registro_log[moneda][match.groups()[3]][match.groups()[1]]['contador']=1+registro_log[moneda][match.groups()[3]][match.groups()[1]]['contador']
-                            if nuevo1==False:
-                                registro_log[moneda][match.groups()[3]]['contador']=1+registro_log[moneda][match.groups()[3]]['contador']
-                            if nuevo==False:
-                                registro_log[moneda]['contador']=1+registro_log[moneda]['contador']
-                        else:
-                            info_faltante=False
-                            fin_bucle=True
-                            break 
+                        #print(line[0:19].replace(' ','T').replace(',','.'), datetime.fromisoformat(line[0:19].replace(' ','T').replace(',','.'))>(datetime.now() - timedelta(minutes=60)))
+   
+                        if datetime.fromisoformat(line[0:19].replace(' ','T').replace(',','.'))>(datetime.now() - timedelta(minutes=120)):
+                                registro_log[moneda]['contador']+=1
+
                 t_fin1=process_time()
-                print("\t",moneda,f"archivo: debug.log{archivo}",f"-> tiempo ejecución: {t_fin1-tmoneda} segundos")
-        t_fin1=process_time()
-        print(moneda, f"-> tiempo ejecución: {t_fin1-t_inicio1} segundos")
+                print("\t",moneda,f"archivo: btdex.log",f"-> tiempo ejecución: {t_fin1-tmoneda} segundos")
+            t_fin1=process_time()
+            print(moneda, f"-> tiempo ejecución: {t_fin1-t_inicio1} segundos")
 
-        log_harvester.setdefault(moneda,{'cantidad':registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], 'porcentaje':"{:.2%}".format(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/384)})
-        #print(registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador'], (registro_log[moneda]['INFO']['harvester'][f"{moneda.replace('-blockchain','')}.harvester.harvester"]['contador']/384))
+            log_harvester.setdefault(moneda,{'cantidad':registro_log[moneda]['contador'],'porcentaje':"{:.2%}".format(registro_log[moneda]['contador']/30)})
+            #print({'cantidad':registro_log[moneda]['contador'],'porcentaje':registro_log[moneda]['contador']/15})
+        elif moneda=='bitcoinhd':
+            regex='^([0-9:. -]{23})\s([a-zA-Z0-9-\W]*) round finished: roundtime=([0-9]*)ms, speed=([0-9.]*)MiB/s'
+            contador=1
+            t_inicio1=process_time()
+            info_faltante=True
+            fin_bucle=False
+            if info_faltante==False: break
+            n=0
+            #fr"{parametros.ruta_log_signum}\\btdex.log"
+            with FileReadBackwards(parametros.ruta_log_bhd , encoding=programa[moneda]) as frb:
+                tmoneda=process_time()
+                
+                #print(line[0:19].replace(' ','T').replace(',','.'), datetime.fromisoformat(line[0:19].replace(' ','T').replace(',','.'))>(datetime.now() - timedelta(minutes=120)))
+                for line in frb:
+                    if fin_bucle: break
+                    for match in re.finditer(regex, line, re.S):
+                        #print(line[0:19].replace(' ','T').replace(',','.'), datetime.fromisoformat(line[0:19].replace(' ','T').replace(',','.'))>(datetime.now() - timedelta(minutes=60)))
+   
+                        if datetime.fromisoformat(line[0:19].replace(' ','T').replace(',','.'))>(datetime.now() - timedelta(minutes=120)):
+                                registro_log[moneda]['contador']+=1
 
+                t_fin1=process_time()
+                print("\t",moneda,f"archivo: btdex.log",f"-> tiempo ejecución: {t_fin1-tmoneda} segundos")
+            t_fin1=process_time()
+            print(moneda, f"-> tiempo ejecución: {t_fin1-t_inicio1} segundos")
+
+            log_harvester.setdefault(moneda,{'cantidad':registro_log[moneda]['contador'],'porcentaje':"{:.2%}".format(registro_log[moneda]['contador']/40)})
+            #print({'cantidad':registro_log[moneda]['contador'],'porcentaje':registro_log[moneda]['contador']/20})
     log_harvester1={}
     if os.path.isfile("data/registro_log_harvester.json")==False: 
         open("data/registro_log_harvester.json","w").close()

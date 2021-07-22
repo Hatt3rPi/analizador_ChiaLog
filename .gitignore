@@ -8,3 +8,8 @@ data/*.json
 parametros.py
 test[0-9].py
 __pycache__/*.pyc
+test/*.py
+test
+test.py
+test3.py
+download_plots.py

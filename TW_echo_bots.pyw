@@ -42,9 +42,10 @@ def send_welcome(message):
     _plots.bot_analisis_log()
 @bot.message_handler(commands=['ver_pantalla'])
 def send_welcome(message):
-    _plots.bot_ver_pantalla()					
-@bot.message_handler(func=lambda message: True)
+    _plots.bot_ver_pantalla()	
+
+'''@bot.message_handler(func=lambda message: True)
 def echo_all(message):
-    bot.reply_to(message, message.text)
+    bot.reply_to(message, message.text)'''
 bot.polling()
 
