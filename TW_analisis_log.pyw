@@ -10,6 +10,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 # Libraries
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import pandas as pd
 from math import pi
 import parametros
@@ -473,5 +474,155 @@ def main():
     t_fin_gral=process_time()
     print(f"Tiempo Total ejecución: {t_fin_gral-t_inicio_gral} segundos")
 
+def analiza_sp():
+    hora_corte=(datetime.now() - timedelta(days=1))
+    log_historico_24hr={}
+    log_historico_24hr_nuevos={}
+    with open("data/registro_parciales.json", 'r') as json_file:
+        log_historico_24hr = json.load(json_file)
+    log_historico_24hr=dict(log_historico_24hr)
+    sp_nuevos=[]
+    alias=""
+    regex = '^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_ .]*): ([A-Z]*)'
+    archivos=['','.1','.2','.3','.4','.5','.6','.7']
+    reg_parcial_estropeado='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s]*Error in pooling'
+    reg_parcial_invalido='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s]*Error connecting to pool: Cannot connect to host'
+    reg_sp='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): INFO[\s]*([0-9]*) plots were eligible for farming ([0-9a-z]*)... Found ([0-9]*) proofs. Time: ([0-9.]*) s. Total ([0-9]*)'
+    reg_get_pool="^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _ .]*): INFO[\s]* GET /farmer response: \{'authentication_public_key': '0x8e03a755200[a-z0-9 :,']* 'current_difficulty': ([0-9]*), 'current_points': ([0-9]*)"
+    reg_inicio_sp='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _ .]*): INFO[\s]*Finished sub slot, SP 64/64, ([a-z0-9]*)'
+    reg_server_down='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s][a-zA-Z _:.,/]*Server disconnected'
+    fin_bucle=False
+    server_down=False
+    for archivo in archivos:
+        with FileReadBackwards(fr"C:\Users\{os.getlogin()}\.chia\mainnet\log\debug.log{archivo}",encoding='latin-1') as frb:
+            tmoneda=process_time()
+            for line in frb:
+                if fin_bucle: break
+                for validos in re.finditer(regex, line, re.S):
+                    if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=600)):
+
+                        for match in re.finditer(reg_sp, line, re.S):
+                            alias=match.groups()[4]
+                            
+                            if alias not in sp_nuevos:
+                                sp_nuevos.append(match.groups()[4])
+                                log_historico_24hr_nuevos.setdefault(match.groups()[4],{
+                                    "timestamp": "",
+                                    "alias":match.groups()[4],
+                                    "signage_points":0,
+                                    "pruebas":0,
+                                    "total_parciales" :0,
+                                    "parciales_validos":0,
+                                    "parciales_estropeados":0,
+                                    "parciales_invalidos":0,
+                                    "dificultad":0,
+                                    "puntaje":0,
+                                    "tiempos":[],
+                                    "t_min":0,
+                                    "t_max":0,
+                                    "t_prom":0 
+                                    })
+
+                            if log_historico_24hr_nuevos[match.groups()[4]]["timestamp"]=="":
+                                log_historico_24hr_nuevos[match.groups()[4]]["timestamp"]=match.groups()[0]
+                            else:
+                                log_historico_24hr_nuevos[match.groups()[4]]["timestamp"]=datetime.isoformat(min([datetime.fromisoformat(log_historico_24hr_nuevos[match.groups()[4]]["timestamp"]),datetime.fromisoformat(match.groups()[0])])                            )
+                            log_historico_24hr_nuevos[match.groups()[4]]["signage_points"]+=1
+                            log_historico_24hr_nuevos[match.groups()[4]]["pruebas"]+=int(match.groups()[3])
+                            log_historico_24hr_nuevos[match.groups()[4]]["total_parciales"]+=int(match.groups()[5])
+                            log_historico_24hr_nuevos[match.groups()[4]]["tiempos"].append(float(match.groups()[6]))
+
+                        for match in re.finditer(reg_parcial_estropeado, line, re.S):
+                            log_historico_24hr_nuevos[alias]["parciales_estropeados"]+=1
+                        for match in re.finditer(reg_parcial_invalido, line, re.S):
+                            log_historico_24hr_nuevos[alias]["parciales_invalidos"]+=1   
+                        for match in re.finditer(reg_get_pool, line, re.S):
+                            #dificultad=int(match.groups()[3])
+                            log_historico_24hr_nuevos[alias]["dificultad"]=int(match.groups()[3])
+                            log_historico_24hr_nuevos[alias]["puntaje"]=int(match.groups()[4])
+                            if int(match.groups()[4])==0:
+                                print(line[0:19],"bloque ganado por la pool")
+                        for match in re.finditer(reg_inicio_sp, line, re.S):
+                            if log_historico_24hr_nuevos[alias]["timestamp"]=="":
+                                log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(match.groups()[0])
+                            else:
+                                log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(min([datetime.fromisoformat(log_historico_24hr_nuevos[alias]["timestamp"]),datetime.fromisoformat(match.groups()[0])])                            )
+                    else:
+                        fin_bucle=True
+                        for signagnes_nuevos in sp_nuevos:
+                            log_historico_24hr_nuevos[signagnes_nuevos]["t_min"]=round(min(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
+                            log_historico_24hr_nuevos[signagnes_nuevos]["t_max"]=round(max(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
+                            log_historico_24hr_nuevos[signagnes_nuevos]["t_prom"]=round(sum(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]) / len(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
+                            log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]=log_historico_24hr_nuevos[signagnes_nuevos]["total_parciales"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_estropeados"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]
+                            if signagnes_nuevos in log_historico_24hr:
+                                if log_historico_24hr_nuevos[signagnes_nuevos]["signage_points"]<log_historico_24hr[signagnes_nuevos]["signage_points"]:
+                                    log_historico_24hr_nuevos.pop(signagnes_nuevos)
+                                else:
+                                    log_historico_24hr.pop(signagnes_nuevos)
+                        for match in re.finditer(reg_server_down, line, re.S):
+                            server_down=True
+                            
+    z = dict(list(log_historico_24hr.items()) + list(log_historico_24hr_nuevos.items()))
+    for n in z.copy():
+        
+        #print(n,z[n]["signage_points"],datetime.fromisoformat(z[n]["timestamp"]),hora_corte,datetime.fromisoformat(z[n]["timestamp"])<hora_corte, f"|| Hora Actual: {datetime.now()}")
+        if datetime.fromisoformat(z[n]["timestamp"])<hora_corte:
+            print(n,"se elimina por tener fecha",z[n]["timestamp"])
+            z.pop(n)
+            
+    with open("data/registro_parciales.json", 'w') as outfile:
+        json.dump(dict(sorted(z.items(), key=lambda item: item[1]['timestamp'])), outfile,indent=3)
+    if server_down==True:
+        print('Servidor de pool caído')
+    #print(log_historico_24hr_nuevos)
+
+def grafica_proofs():
+    log_historico_24hr={}
+    with open("data/registro_parciales.json", 'r') as json_file:
+        log_historico_24hr = json.load(json_file)
+    
+    df=pd.DataFrame.from_dict(log_historico_24hr,orient='index',columns=['timestamp','parciales_validos','parciales_estropeados','parciales_invalidos','dificultad'])
+    df['timestamp']= pd.to_datetime(df['timestamp'])
+    fig, ax = plt.subplots(num=10,facecolor='#0B1C28', figsize=(12,6))
+    ax.bar('timestamp', 'parciales_validos', data=df,   color='blue', label='Parciales Válidos', width = 0.005)
+    ax.bar('timestamp', 'parciales_estropeados', data=df,   color='yellow', label='Parciales Estropeados', width = 0.005)
+    ax.bar('timestamp', 'parciales_invalidos', data=df,   color='grey', label='Parciales Inválidos', width = 0.005)
+    ax.plot('timestamp', 'dificultad', data=df ,  color='white', label='Dificultad')
+    ax.spines['top'].set_color('#0B1C28') 
+    ax.spines['right'].set_color('#0B1C28')
+    ax.spines['left'].set_color('#0B1C28')
+    ax.spines['bottom'].set_color('white')
+    ax.tick_params(axis='x', colors='white')  
+    ax.tick_params(axis='y', colors='white')
+    ax.set_ylabel('PARCIALES ENCONTRADOS',color='white')
+    ax.set_xlabel(f'HORA (Actualización:{datetime.now().strftime("%Y-%m-%d %H:%M:%S")})',color='white')
+    ax.set_title('Distribución de parciales por signage point',color='white')
+    ax.legend()
+    ax.set_xlim(df['timestamp'].min(),df['timestamp'].max())
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval = 3))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    ax.set_facecolor('#102b38')
+    #plt.show()
+    plt.savefig('img/registro_parciales_24h.png')
+    mensajes={}
+    if os.path.isfile("data/telegram_mensajes.json"):
+        with open("data/telegram_mensajes.json", 'r') as json_file:
+            mensajes = json.load(json_file)
+            if "parciales" in mensajes:
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=mensajes["parciales"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/registro_parciales_24h.png', 'rb')),message_id=mensajes["parciales"], chat_id=parametros.chat_id)
+            else:
+                id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_parciales_24h.png', 'rb'))
+                
+                mensajes.setdefault("parciales",id1.message_id)
+                with open("data/telegram_mensajes.json", 'w') as outfile:
+                    json.dump(mensajes, outfile,indent=3)
+    else:
+        id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_parciales_24h.png', 'rb'))
+        mensajes.setdefault("parciales",id1.message_id)
+        with open("data/telegram_mensajes.json", 'w') as outfile:
+            json.dump(mensajes, outfile,indent=3)
 if __name__ == "__main__":
     main()
+    analiza_sp()
+    grafica_proofs()

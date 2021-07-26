@@ -2,7 +2,7 @@ import telebot
 import _plots
 import funciones
 def echo_bot():
-	bot = telebot.TeleBot("1842675017:AAEOrbcCcdjUjA2RHJIkdExDOcYWip9mx24")
+	bot = telebot.TeleBot("1842675017:AAEY-RLslqtlCdwFK80pyjQdkT3EyitLe8k")
 	@bot.message_handler(commands=['help'])
 	def send_welcome(message):
 		bot.reply_to(message, """Hola, las funciones disponibles son: 
@@ -31,3 +31,6 @@ def echo_bot():
 	def echo_all(message):
 		bot.reply_to(message, message.text)
 	bot.polling()
+
+if __name__ == "__main__":
+    echo_bot()
