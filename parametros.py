@@ -14,7 +14,7 @@ chat_id="-599355307"
 # --- ubicación carpetas farmeo ---
 path = ["C:\Plots","E:\Plots","F:\Plots","G:\Plots","H:\Plots"]
 blockchain={'Chia':{"C:\\Plots","E:\\Plots","F:\\Plots","G:\\Plots","H:\\Plots"}, 
-'Signum':{'E:\\Plots Signum\\NW','I:\\plots_signum'}, 
+'Signum':{'E:\\Plots Signum\\NW','I:\\plots_signum','H:\\plots_signum','G:\\plots_signum','F:\\plots_signum'}, 
 'Temporales':{'D:\\Plots'}}
 
 
@@ -33,7 +33,7 @@ check_plot_nro_proof=50
 #---- Funcionamiento ----
 
 #"app-1.1.7"
-version_chia="app-1.2.2"
+version_chia="app-1.2.3"
 finger_print="3571905713"
 ruta_log_signum=r"C:\Users\gesti\Downloads\BTDEX\log\btdex.log"
 ruta_log_bhd=fr"C:\Users\{os.getlogin()}\.config\foxy-miner\logs\foxy-miner.log"

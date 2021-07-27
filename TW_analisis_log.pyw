@@ -48,9 +48,10 @@ def historia_harvester():
         else:
             hrvst_sgna=0
             hrvst_bth=0
-        data.append([key[11:16], float(fila['chia']['porcentaje'].strip('%'))/100,float(fila['chaingreen']['porcentaje'].strip('%'))/100,float(fila['flax']['porcentaje'].strip('%'))/100,float(fila['spare-blockchain']['porcentaje'].strip('%'))/100,hrvst_sgna,hrvst_bth])
+        data.append([key, float(fila['chia']['porcentaje'].strip('%'))/100,float(fila['chaingreen']['porcentaje'].strip('%'))/100,float(fila['flax']['porcentaje'].strip('%'))/100,float(fila['spare-blockchain']['porcentaje'].strip('%'))/100,hrvst_sgna,hrvst_bth])
 
     df = pd.DataFrame(data,columns=['hora','chia','chaingreen','flax','spare-blockchain','signum','bitcoinhd'])
+    df['hora']= pd.to_datetime(df['hora'])
     plt.plot('hora', 'chia', data=df,   color='green', label='chia')
     plt.plot('hora', 'chaingreen', data=df,   color='orange', label='chaingreen')
     plt.plot('hora', 'flax', data=df,   color='grey', label='flax')
@@ -58,8 +59,12 @@ def historia_harvester():
     plt.plot('hora', 'signum', data=df,   color='red', label='signum')
     plt.plot('hora', 'bitcoinhd', data=df,   color='brown', label='bitcoinhd')
     plt.ylim(0,1.3)
+    plt.xlim(df['hora'].min(),df['hora'].max())
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval = 3))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     #plt.grid(axis='x', color='0.95')
-    plt.xticks(np.arange(0, len(df['hora']), 30))
+    #plt.xticks(np.arange(0, len(df['hora']), 30))
 
 
     plt.legend(title='Moneda:')
@@ -499,7 +504,7 @@ def analiza_sp():
             for line in frb:
                 if fin_bucle: break
                 for validos in re.finditer(regex, line, re.S):
-                    if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=600)):
+                    if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=30)):
 
                         for match in re.finditer(reg_sp, line, re.S):
                             alias=match.groups()[4]
@@ -516,7 +521,9 @@ def analiza_sp():
                                     "parciales_estropeados":0,
                                     "parciales_invalidos":0,
                                     "dificultad":0,
+                                    "plots":0,
                                     "puntaje":0,
+                                    "TiB_estimados":0,                                    
                                     "tiempos":[],
                                     "t_min":0,
                                     "t_max":0,
@@ -531,22 +538,24 @@ def analiza_sp():
                             log_historico_24hr_nuevos[match.groups()[4]]["pruebas"]+=int(match.groups()[3])
                             log_historico_24hr_nuevos[match.groups()[4]]["total_parciales"]+=int(match.groups()[5])
                             log_historico_24hr_nuevos[match.groups()[4]]["tiempos"].append(float(match.groups()[6]))
-
+                            log_historico_24hr_nuevos[match.groups()[4]]["plots"]=float(match.groups()[7])
                         for match in re.finditer(reg_parcial_estropeado, line, re.S):
                             log_historico_24hr_nuevos[alias]["parciales_estropeados"]+=1
                         for match in re.finditer(reg_parcial_invalido, line, re.S):
-                            log_historico_24hr_nuevos[alias]["parciales_invalidos"]+=1   
+                            log_historico_24hr_nuevos[alias]["parciales_invalidos"]+=1
+                            #parametros.bot.send_message(parametros.chat_id, '@h4tt3r Pool desconectada, validar y cambiarse de pool opciones: https://xch-us-east.flexpool.io o https://api.biopool.tk')   
                         for match in re.finditer(reg_get_pool, line, re.S):
                             #dificultad=int(match.groups()[3])
                             log_historico_24hr_nuevos[alias]["dificultad"]=int(match.groups()[3])
                             log_historico_24hr_nuevos[alias]["puntaje"]=int(match.groups()[4])
-                            if int(match.groups()[4])==0:
-                                print(line[0:19],"bloque ganado por la pool")
+                            #if int(match.groups()[4])==0:
+                                #print(line[0:19],"bloque pagado por la pool")
+                            
                         for match in re.finditer(reg_inicio_sp, line, re.S):
                             if log_historico_24hr_nuevos[alias]["timestamp"]=="":
                                 log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(match.groups()[0])
                             else:
-                                log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(min([datetime.fromisoformat(log_historico_24hr_nuevos[alias]["timestamp"]),datetime.fromisoformat(match.groups()[0])])                            )
+                                log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(min([datetime.fromisoformat(log_historico_24hr_nuevos[alias]["timestamp"]),datetime.fromisoformat(match.groups()[0])]))
                     else:
                         fin_bucle=True
                         for signagnes_nuevos in sp_nuevos:
@@ -554,6 +563,8 @@ def analiza_sp():
                             log_historico_24hr_nuevos[signagnes_nuevos]["t_max"]=round(max(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
                             log_historico_24hr_nuevos[signagnes_nuevos]["t_prom"]=round(sum(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]) / len(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
                             log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]=log_historico_24hr_nuevos[signagnes_nuevos]["total_parciales"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_estropeados"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]
+                            log_historico_24hr_nuevos[signagnes_nuevos]["TiB_estimados"]=log_historico_24hr_nuevos[alias]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   
+                            print(log_historico_24hr_nuevos[alias]["timestamp"],log_historico_24hr_nuevos[alias]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   )
                             if signagnes_nuevos in log_historico_24hr:
                                 if log_historico_24hr_nuevos[signagnes_nuevos]["signage_points"]<log_historico_24hr[signagnes_nuevos]["signage_points"]:
                                     log_historico_24hr_nuevos.pop(signagnes_nuevos)
@@ -567,7 +578,7 @@ def analiza_sp():
         
         #print(n,z[n]["signage_points"],datetime.fromisoformat(z[n]["timestamp"]),hora_corte,datetime.fromisoformat(z[n]["timestamp"])<hora_corte, f"|| Hora Actual: {datetime.now()}")
         if datetime.fromisoformat(z[n]["timestamp"])<hora_corte:
-            print(n,"se elimina por tener fecha",z[n]["timestamp"])
+            #print(n,"se elimina por tener fecha",z[n]["timestamp"])
             z.pop(n)
             
     with open("data/registro_parciales.json", 'w') as outfile:
@@ -581,7 +592,7 @@ def grafica_proofs():
     with open("data/registro_parciales.json", 'r') as json_file:
         log_historico_24hr = json.load(json_file)
     
-    df=pd.DataFrame.from_dict(log_historico_24hr,orient='index',columns=['timestamp','parciales_validos','parciales_estropeados','parciales_invalidos','dificultad'])
+    df=pd.DataFrame.from_dict(log_historico_24hr,orient='index',columns=['timestamp','parciales_validos','parciales_estropeados','parciales_invalidos','dificultad','total_parciales'])
     df['timestamp']= pd.to_datetime(df['timestamp'])
     fig, ax = plt.subplots(num=10,facecolor='#0B1C28', figsize=(12,6))
     ax.bar('timestamp', 'parciales_validos', data=df,   color='blue', label='Parciales Válidos', width = 0.005)
@@ -595,12 +606,26 @@ def grafica_proofs():
     ax.tick_params(axis='x', colors='white')  
     ax.tick_params(axis='y', colors='white')
     ax.set_ylabel('PARCIALES ENCONTRADOS',color='white')
-    ax.set_xlabel(f'HORA (Actualización:{datetime.now().strftime("%Y-%m-%d %H:%M:%S")})',color='white')
+    ax.set_xlabel(f'HORA \n(Actualización:{datetime.now().strftime("%Y-%m-%d %H:%M:%S")})',color='white')
     ax.set_title('Distribución de parciales por signage point',color='white')
-    ax.legend()
+    ax.legend(loc='upper left')
     ax.set_xlim(df['timestamp'].min(),df['timestamp'].max())
+    ax.set_ylim(0,df['parciales_validos'].max()*1.2)
     ax.xaxis.set_major_locator(mdates.HourLocator(interval = 3))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    men_parvalidos=f"Parciales válidos:{df['parciales_validos'].sum()} ("+"{:.2%}".format(df['parciales_validos'].sum()/df['total_parciales'].sum())+")"
+    men_parinvalidos=f"Parciales inválidos:{df['parciales_invalidos'].sum()} ("+"{:.2%}".format(df['parciales_invalidos'].sum()/df['total_parciales'].sum())+")"
+    men_parestropeados=f"Parciales estropeados:{df['parciales_estropeados'].sum()} ("+"{:.2%}".format(df['parciales_estropeados'].sum()/df['total_parciales'].sum())+")"
+    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.85,f"Últimas 24 horas \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
+        bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10})   
+
+    df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_validos'].sum() 
+    men_parvalidos=f"Parciales válidos:{df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_validos'].sum() } ("+"{:.2%}".format(df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_validos'].sum() /df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'total_parciales'].sum())+")"
+    men_parinvalidos=f"Parciales inválidos:{df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_invalidos'].sum() } ("+"{:.2%}".format(df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_invalidos'].sum() /df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'total_parciales'].sum())+")"
+    men_parestropeados=f"Parciales estropeados:{df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_estropeados'].sum() } ("+"{:.2%}".format(df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_estropeados'].sum() /df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'total_parciales'].sum())+")"
+  
+    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.62,f"Última hora \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
+        bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10}) 
     ax.set_facecolor('#102b38')
     #plt.show()
     plt.savefig('img/registro_parciales_24h.png')
@@ -622,7 +647,59 @@ def grafica_proofs():
         mensajes.setdefault("parciales",id1.message_id)
         with open("data/telegram_mensajes.json", 'w') as outfile:
             json.dump(mensajes, outfile,indent=3)
+
+def grafica_tib():
+    log_historico_24hr={}
+    with open("data/registro_parciales.json", 'r') as json_file:
+        log_historico_24hr = json.load(json_file)
+    
+    df=pd.DataFrame.from_dict(log_historico_24hr,orient='index',columns=['timestamp','TiB_estimados'])
+    df['timestamp']= pd.to_datetime(df['timestamp'])
+    df['TiB_estimados_6h'] = df.TiB_estimados.rolling(18, min_periods=1).mean()
+    fig, ax = plt.subplots(num=11,facecolor='#0B1C28', figsize=(12,6))
+    ax.plot('timestamp', 'TiB_estimados', data=df ,  color='blue', label='TiB estimado según parciales válidos')
+    ax.plot('timestamp', 'TiB_estimados_6h', data=df ,  color='green', label='TiB media móvil de 3 horas')
+    ax.spines['top'].set_color('#0B1C28') 
+    ax.spines['right'].set_color('#0B1C28')
+    ax.spines['left'].set_color('#0B1C28')
+    ax.spines['bottom'].set_color('white')
+    ax.tick_params(axis='x', colors='white')  
+    ax.tick_params(axis='y', colors='white')
+    ax.set_ylabel('TiB',color='white')
+    ax.set_xlabel(f'HORA \n(Actualización:{datetime.now().strftime("%Y-%m-%d %H:%M:%S")})',color='white')
+    ax.set_title('TiB según parciales válidos encontrados',color='white')
+    ax.legend(loc='upper left')
+    ax.set_xlim(df['timestamp'].min(),df['timestamp'].max())
+    ax.set_ylim(0,df['TiB_estimados'].max()*1.2)
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval = 3))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    ax.set_facecolor('#102b38')
+    #print(df['timestamp'].max()-timedelta(hours=24))
+    #print(round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=24), 'TiB_estimados'].mean(),2))
+    ax.text(df['timestamp'].max()-timedelta(hours=4.85),df['TiB_estimados'].max()*0.89,f"TiB promedio \nPasadas 24h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=24), 'TiB_estimados'].mean(),2)} TiB\nPasadas 6h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=6), 'TiB_estimados'].mean(),2)} TiB\nPasadas 3h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=3), 'TiB_estimados'].mean(),2)} TiB\nPasada 1h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=1), 'TiB_estimados'].mean(),2)} TiB",
+        bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10})
+    plt.savefig('img/registro_tib_24h.png')
+    mensajes={}
+    if os.path.isfile("data/telegram_mensajes.json"):
+        with open("data/telegram_mensajes.json", 'r') as json_file:
+            mensajes = json.load(json_file)
+            if "tib_movil" in mensajes:
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/logo.png', 'rb')),message_id=mensajes["tib_movil"], chat_id=parametros.chat_id)
+                parametros.bot.edit_message_media(media=types.InputMediaPhoto(open('img/registro_tib_24h.png', 'rb')),message_id=mensajes["tib_movil"], chat_id=parametros.chat_id)
+            else:
+                id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_tib_24h.png', 'rb'))
+                
+                mensajes.setdefault("tib_movil",id1.message_id)
+                with open("data/telegram_mensajes.json", 'w') as outfile:
+                    json.dump(mensajes, outfile,indent=3)
+    else:
+        id1=parametros.bot.send_photo(parametros.chat_id, photo=open('img/registro_tib_24h.png', 'rb'))
+        mensajes.setdefault("tib_movil",id1.message_id)
+        with open("data/telegram_mensajes.json", 'w') as outfile:
+            json.dump(mensajes, outfile,indent=3)
+
 if __name__ == "__main__":
     main()
     analiza_sp()
     grafica_proofs()
+    grafica_tib()
