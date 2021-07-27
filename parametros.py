@@ -7,8 +7,8 @@ import os
 ## Ingresar paratmetros ##
 # --- Telegram ---
 
-token_bot="1842675017:AAEY-RLslqtlCdwFK80pyjQdkT3EyitLe8k"
-chat_id="-599355307"
+token_bot=""
+chat_id="-"
 #chat_id="-599355307" 1567062024
 
 # --- ubicación carpetas farmeo ---
@@ -34,7 +34,7 @@ check_plot_nro_proof=50
 
 #"app-1.1.7"
 version_chia="app-1.2.3"
-finger_print="3571905713"
+finger_print=""
 ruta_log_signum=r"C:\Users\gesti\Downloads\BTDEX\log\btdex.log"
 ruta_log_bhd=fr"C:\Users\{os.getlogin()}\.config\foxy-miner\logs\foxy-miner.log"
 ruta_daemon=f"C:\\Users\\{os.getlogin()}\\AppData\Local\chia-blockchain\\{version_chia}\\resources\\app.asar.unpacked\\daemon"  
