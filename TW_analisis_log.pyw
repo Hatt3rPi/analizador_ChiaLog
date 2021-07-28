@@ -493,9 +493,10 @@ def analiza_sp():
     reg_parcial_estropeado='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s]*Error in pooling'
     reg_parcial_invalido='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s]*Error connecting to pool: Cannot connect to host'
     reg_sp='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z_.]*): INFO[\s]*([0-9]*) plots were eligible for farming ([0-9a-z]*)... Found ([0-9]*) proofs. Time: ([0-9.]*) s. Total ([0-9]*)'
-    reg_get_pool="^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _ .]*): INFO[\s]* GET /farmer response: \{'authentication_public_key': '0x8e03a755200[a-z0-9 :,']* 'current_difficulty': ([0-9]*), 'current_points': ([0-9]*)"
+    reg_get_pool="^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _ .]*): INFO[\s]* GET /farmer response: \{'authentication_public_key': '0xb6576f4e77[a-z0-9 :,']* 'current_difficulty': ([0-9]*), 'current_points': ([0-9]*)"
     reg_inicio_sp='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _ .]*): INFO[\s]*Finished sub slot, SP 64/64, ([a-z0-9]*)'
     reg_server_down='^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): ERROR[\s][a-zA-Z _:.,/]*Server disconnected'
+    reg_cambio_dificultad="^([0-9:.T-]{23}) ([a-zA-Z_.]*) ([a-zA-Z _.]*): INFO[\s]*Pool response: \{'new_difficulty': ([0-9]*)"
     fin_bucle=False
     server_down=False
     for archivo in archivos:
@@ -504,7 +505,7 @@ def analiza_sp():
             for line in frb:
                 if fin_bucle: break
                 for validos in re.finditer(regex, line, re.S):
-                    if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=30)):
+                    if datetime.fromisoformat(line[0:19])>(datetime.now() - timedelta(minutes=3000)):
 
                         for match in re.finditer(reg_sp, line, re.S):
                             alias=match.groups()[4]
@@ -547,10 +548,11 @@ def analiza_sp():
                         for match in re.finditer(reg_get_pool, line, re.S):
                             #dificultad=int(match.groups()[3])
                             log_historico_24hr_nuevos[alias]["dificultad"]=int(match.groups()[3])
-                            log_historico_24hr_nuevos[alias]["puntaje"]=int(match.groups()[4])
+                            #log_historico_24hr_nuevos[alias]["puntaje"]=int(match.groups()[4])
                             #if int(match.groups()[4])==0:
                                 #print(line[0:19],"bloque pagado por la pool")
-                            
+                        for match in re.finditer(reg_cambio_dificultad, line, re.S):
+                            log_historico_24hr_nuevos[alias]["dificultad"]=int(match.groups()[3])                            
                         for match in re.finditer(reg_inicio_sp, line, re.S):
                             if log_historico_24hr_nuevos[alias]["timestamp"]=="":
                                 log_historico_24hr_nuevos[alias]["timestamp"]=datetime.isoformat(match.groups()[0])
@@ -563,8 +565,8 @@ def analiza_sp():
                             log_historico_24hr_nuevos[signagnes_nuevos]["t_max"]=round(max(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
                             log_historico_24hr_nuevos[signagnes_nuevos]["t_prom"]=round(sum(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]) / len(log_historico_24hr_nuevos[signagnes_nuevos]["tiempos"]),3)
                             log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]=log_historico_24hr_nuevos[signagnes_nuevos]["total_parciales"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_estropeados"]-log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]
-                            log_historico_24hr_nuevos[signagnes_nuevos]["TiB_estimados"]=log_historico_24hr_nuevos[alias]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   
-                            print(log_historico_24hr_nuevos[alias]["timestamp"],log_historico_24hr_nuevos[alias]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   )
+                            log_historico_24hr_nuevos[signagnes_nuevos]["TiB_estimados"]=log_historico_24hr_nuevos[signagnes_nuevos]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   
+                            print(log_historico_24hr_nuevos[signagnes_nuevos]["timestamp"],log_historico_24hr_nuevos[signagnes_nuevos]["dificultad"]*log_historico_24hr_nuevos[signagnes_nuevos]["parciales_validos"]*6*24*101/(10000)   )
                             if signagnes_nuevos in log_historico_24hr:
                                 if log_historico_24hr_nuevos[signagnes_nuevos]["signage_points"]<log_historico_24hr[signagnes_nuevos]["signage_points"]:
                                     log_historico_24hr_nuevos.pop(signagnes_nuevos)
@@ -616,7 +618,7 @@ def grafica_proofs():
     men_parvalidos=f"Parciales válidos:{df['parciales_validos'].sum()} ("+"{:.2%}".format(df['parciales_validos'].sum()/df['total_parciales'].sum())+")"
     men_parinvalidos=f"Parciales inválidos:{df['parciales_invalidos'].sum()} ("+"{:.2%}".format(df['parciales_invalidos'].sum()/df['total_parciales'].sum())+")"
     men_parestropeados=f"Parciales estropeados:{df['parciales_estropeados'].sum()} ("+"{:.2%}".format(df['parciales_estropeados'].sum()/df['total_parciales'].sum())+")"
-    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.85,f"Últimas 24 horas \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
+    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.85*1.1,f"Últimas 24 horas \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
         bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10})   
 
     df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_validos'].sum() 
@@ -624,7 +626,7 @@ def grafica_proofs():
     men_parinvalidos=f"Parciales inválidos:{df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_invalidos'].sum() } ("+"{:.2%}".format(df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_invalidos'].sum() /df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'total_parciales'].sum())+")"
     men_parestropeados=f"Parciales estropeados:{df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_estropeados'].sum() } ("+"{:.2%}".format(df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'parciales_estropeados'].sum() /df.loc[df['timestamp'] >= df['timestamp'].max()-timedelta(hours=1), 'total_parciales'].sum())+")"
   
-    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.62,f"Última hora \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
+    ax.text(df['timestamp'].max()-timedelta(hours=7),df['parciales_validos'].max()*0.62*1.1,f"Última hora \n{men_parvalidos}\n{men_parestropeados}\n{men_parinvalidos}",
         bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10}) 
     ax.set_facecolor('#102b38')
     #plt.show()
@@ -655,10 +657,10 @@ def grafica_tib():
     
     df=pd.DataFrame.from_dict(log_historico_24hr,orient='index',columns=['timestamp','TiB_estimados'])
     df['timestamp']= pd.to_datetime(df['timestamp'])
-    df['TiB_estimados_6h'] = df.TiB_estimados.rolling(18, min_periods=1).mean()
+    df['TiB_estimados_6h'] = df.TiB_estimados.rolling(12, min_periods=1).mean()
     fig, ax = plt.subplots(num=11,facecolor='#0B1C28', figsize=(12,6))
     ax.plot('timestamp', 'TiB_estimados', data=df ,  color='blue', label='TiB estimado según parciales válidos')
-    ax.plot('timestamp', 'TiB_estimados_6h', data=df ,  color='green', label='TiB media móvil de 3 horas')
+    ax.plot('timestamp', 'TiB_estimados_6h', data=df ,  color='green', label='TiB media móvil de 4 horas')
     ax.spines['top'].set_color('#0B1C28') 
     ax.spines['right'].set_color('#0B1C28')
     ax.spines['left'].set_color('#0B1C28')
@@ -676,7 +678,7 @@ def grafica_tib():
     ax.set_facecolor('#102b38')
     #print(df['timestamp'].max()-timedelta(hours=24))
     #print(round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=24), 'TiB_estimados'].mean(),2))
-    ax.text(df['timestamp'].max()-timedelta(hours=4.85),df['TiB_estimados'].max()*0.89,f"TiB promedio \nPasadas 24h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=24), 'TiB_estimados'].mean(),2)} TiB\nPasadas 6h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=6), 'TiB_estimados'].mean(),2)} TiB\nPasadas 3h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=3), 'TiB_estimados'].mean(),2)} TiB\nPasada 1h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=1), 'TiB_estimados'].mean(),2)} TiB",
+    ax.text(df['timestamp'].max()-timedelta(hours=4.85),df['TiB_estimados'].max()*0.89*1.2,f"TiB promedio \nPasadas 24h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=24), 'TiB_estimados'].mean(),2)} TiB\nPasadas 6h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=6), 'TiB_estimados'].mean(),2)} TiB\nPasadas 4h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=4), 'TiB_estimados'].mean(),2)} TiB\nPasada 1h: {round(df.loc[df['timestamp'] >=df['timestamp'].max()-timedelta(hours=1), 'TiB_estimados'].mean(),2)} TiB",
         bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 10})
     plt.savefig('img/registro_tib_24h.png')
     mensajes={}
